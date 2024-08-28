@@ -1,12 +1,16 @@
-import express, { Request, Response } from 'express';
+// src/app.ts
+import express from 'express';
+import router from './routes/UserRoutes';
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, TypeScript with Express!');
-});
+// Middleware para analisar JSON
+app.use(express.json());
 
-app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+// Rotas da API
+app.use('/api', router);
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

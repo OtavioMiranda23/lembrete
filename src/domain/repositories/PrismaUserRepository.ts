@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { User } from "../entities/User";
-import IUserRepository from "./IUserRepository";
+import IUserCrud from "../../interfaces/IUserCrud";
 
-export default class PrismaUserRepository implements IUserRepository {
+export default class PrismaUserRepository implements IUserCrud {
     private prisma = new PrismaClient();
   
     public async createUser(nickname: string): Promise<User> {
@@ -12,7 +12,7 @@ export default class PrismaUserRepository implements IUserRepository {
         return new User(user.id, user.nickname);
     }
 
-    public async getUsers(): Promise<User[] | null> {
+    public async getUsers(): Promise<User[]> {
         const users: User[] = await this.prisma.user.findMany();
         return users.map((user: User) => new User(user.id, user.nickname));
     }
