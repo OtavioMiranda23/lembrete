@@ -49,5 +49,4 @@ export default class UserService implements IUserCrud{
         if (!id) throw new Error("Id is required");
         return this.repository.deleteUser(id);
     }
-
 }
