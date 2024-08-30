@@ -1,7 +1,4 @@
-import { FoodType } from "@prisma/client";
-import { User } from "./User";
-
-export default class Restaurant {
+export default class RestaurantDtoReturn {
     constructor(
         public id: string, 
         public name: string,
@@ -9,7 +6,6 @@ export default class Restaurant {
         public num: string | null,
         public region: string | null,
         public avaliation: number | null,
-        public users: User[],
-        public foodTypes: FoodType[]
-    ) {}
+        public foodType: string[]
+) {}
 }

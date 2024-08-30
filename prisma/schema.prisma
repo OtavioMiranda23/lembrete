@@ -14,17 +14,29 @@ model User {
   id          String       @id @default(uuid())
   nickname    String       @unique
   restaurants Restaurant[] @relation("UserRestaurants")
+  foodTypes   FoodType[]   @relation("UserFoodType")
 
   @@map("users")
 }
 
 model Restaurant {
-  id     String  @id @default(uuid())
-  name   String
-  street String?
-  num    String?
-  region String?
-  users  User[]  @relation("UserRestaurants")
+  id         String     @id @default(uuid())
+  name       String
+  street     String?
+  num        String?
+  region     String?
+  avaliation Int?
+  foodTypes  FoodType[] @relation("RestaurantFoodType")
+  users      User[]     @relation("UserRestaurants")
 
   @@map("restaurants")
+}
+
+model FoodType {
+  id          String       @id @default(uuid())
+  name        String
+  restaurants Restaurant[] @relation("RestaurantFoodType")
+  users       User[]       @relation("UserFoodType")
+
+  @@map("food_type")
 }

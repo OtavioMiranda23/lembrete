@@ -1,67 +1,103 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { User } from "../entities/User";
-import IUserCrud from "../../interfaces/IUserCrud";
+import { PrismaClient } from "@prisma/client";
 import Restaurant from "../entities/Restaurant";
 import IRestaurantCrud from "../../interfaces/IRestaurantCrud";
+import RestaurantDtoParam from "../../dtos/restaurant/RestaurantDtoParam";
+import RestaurantDtoReturn from "../../dtos/restaurant/RestaurantDtoReturn";
 
 
 export default class PrismaRestaurantRepository implements IRestaurantCrud {
     private prisma = new PrismaClient();
   
-    public async createRestaurant(restaurantData: Omit<Restaurant, 'id'>): Promise<Restaurant> {
-        const restaurant = await this.prisma.restaurant.create({
+    public async createRestaurant(restaurantData: RestaurantDtoParam): Promise<RestaurantDtoReturn> {
+        const rest = await this.prisma.restaurant.create({
             data: { 
                 name: restaurantData.name, 
                 street: restaurantData.street,  
                 num: restaurantData.num, 
                 region: restaurantData.region,
-            } 
+                avaliation: restaurantData.avaliation,
+                foodTypes: {
+                    connect: restaurantData.foodTypeIds.map((foodId) => ({ id: foodId}))
+                }
+            },
+            include: {
+                foodTypes: true
+            }
+
         });
-        return new Restaurant(
-            restaurant.id,
-            restaurant.name,
-            restaurant.street,
-            restaurant.num,
-            restaurant.region
+        return new RestaurantDtoReturn(
+            rest.id,
+            rest.name,
+            rest.street,
+            rest.num,
+            rest.region,
+            rest.avaliation,
+            rest.foodTypes.map(food => food.name)
           );    
         }
 
-    public async getRestaurants(): Promise<Restaurant[]> {
-        const restaurants: Restaurant[] = await this.prisma.restaurant.findMany();
-        return restaurants.map((rest: Restaurant) => new Restaurant(
+    public async getRestaurants(): Promise<RestaurantDtoReturn[]> {
+        const restaurants = await this.prisma.restaurant.findMany({
+            include: {
+                foodTypes: true
+            }
+        });
+
+        return restaurants.map((rest) => new RestaurantDtoReturn(
             rest.id,
             rest.name,
             rest.street,
             rest.num,
-            rest.region
+            rest.region,
+            rest.avaliation,
+            rest.foodTypes.map(food => food.name)
+
         ));
     }
 
-    public async getRestaurantById(id: string): Promise<Restaurant | null> {
-        const rest: Restaurant | null = await this.prisma.restaurant.findUnique({
-            where: { id }
+    public async getRestaurantById(id: string): Promise<RestaurantDtoReturn | null> {
+        const rest = await this.prisma.restaurant.findUnique({
+            where: { id },
+            include: {
+                foodTypes: true
+            }
         });
-        return rest ? new Restaurant(
+    
+        if (!rest) {
+            return null;
+        }
+    
+        return new RestaurantDtoReturn(
             rest.id,
             rest.name,
             rest.street,
             rest.num,
-            rest.region) : null;
+            rest.region,
+            rest.avaliation,
+            rest.foodTypes.map(food => food.name)
+        );
     }
 
-    public async updateRestaurant(id: string, restaurantData: Partial<Omit<Restaurant, 'id'>>): Promise<Restaurant | null> {
-            const rest: Restaurant | null = await this.prisma.restaurant.update({
+    public async updateRestaurant(id: string, restaurantData: RestaurantDtoParam): Promise<RestaurantDtoReturn | null> {
+            const rest = await this.prisma.restaurant.update({
                 where: { id },
-                data: { ...restaurantData }
+                data: { ...restaurantData },
+                include: {
+                    foodTypes: true
+                }
             });
-            
-            return rest ?  new Restaurant(
+            if (!rest) return null;
+
+            return new RestaurantDtoReturn(
                 rest.id,
                 rest.name,
                 rest.street,
                 rest.num,
-                rest.region
-            )   : null;
+                rest.region,
+                rest.avaliation,
+                rest.foodTypes.map(food => food.name)
+
+            ) 
     }
 
     public async deleteRestaurant(id: string): Promise<void> {
