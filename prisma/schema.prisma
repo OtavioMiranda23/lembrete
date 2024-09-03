@@ -34,7 +34,7 @@ model Restaurant {
 
 model FoodType {
   id          String       @id @default(uuid())
-  name        String
+  name        String       @unique
   restaurants Restaurant[] @relation("RestaurantFoodType")
   users       User[]       @relation("UserFoodType")
 

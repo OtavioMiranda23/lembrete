@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import Restaurant from "../entities/Restaurant";
 import IRestaurantCrud from "../../interfaces/IRestaurantCrud";
 import RestaurantDtoParam from "../../dtos/restaurant/RestaurantDtoParam";
 import RestaurantDtoReturn from "../../dtos/restaurant/RestaurantDtoReturn";
@@ -101,7 +100,7 @@ export default class PrismaRestaurantRepository implements IRestaurantCrud {
     }
 
     public async deleteRestaurant(id: string): Promise<void> {
-        await this.prisma.user.delete({
+        await this.prisma.restaurant.delete({
             where: { id }
         })
     }
