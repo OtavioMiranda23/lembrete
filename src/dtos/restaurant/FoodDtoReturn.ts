@@ -4,6 +4,6 @@ export default class FoodDtoReturn {
     constructor(
         public id: string,
         public name: string,
-        public restaurants: Omit<RestaurantDtoReturn, 'foodType'>[],
+        public restaurants?: Omit<RestaurantDtoReturn, 'foodType'>[],
 ) {}
 }

@@ -1,7 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import IRestaurantCrud from "../../interfaces/IRestaurantCrud";
-import RestaurantDtoParam from "../../dtos/restaurant/RestaurantDtoParam";
-import RestaurantDtoReturn from "../../dtos/restaurant/RestaurantDtoReturn";
 import IFoodCrud from "../../interfaces/IFoodCrud";
 import FoodDtoParam from "../../dtos/restaurant/FoodDtoParam";
 import FoodDtoReturn from "../../dtos/restaurant/FoodDtoReturn";
@@ -11,6 +8,7 @@ export default class PrismaFoodRepository implements IFoodCrud {
     private prisma = new PrismaClient();
 
     public async createFood(foodData: FoodDtoParam): Promise<FoodDtoReturn> {
+        console.log("Entrou repo")
         const food = await this.prisma.foodType.create({
             data: { 
                 name: foodData.name,
@@ -43,11 +41,13 @@ export default class PrismaFoodRepository implements IFoodCrud {
     }
   
     public async getFoods(): Promise<FoodDtoReturn[]> {
+
         const foods = await this.prisma.foodType.findMany({
             include: {
                 restaurants: true
             }
         });
+        console.log(foods)
 
         let restaurants: {
             id: string;
@@ -56,7 +56,7 @@ export default class PrismaFoodRepository implements IFoodCrud {
             num: string | null;
             region: string | null;
             avaliation: number | null;
-        }[]; 
+        }[] | undefined; 
 
         foods.forEach(food => {
             food.restaurants.forEach(rest => {
@@ -68,14 +68,13 @@ export default class PrismaFoodRepository implements IFoodCrud {
                     region: rest.region,
                     avaliation: rest.avaliation,
                 }
-                restaurants.push(data)
+                restaurants? restaurants.push(data) : "";
             })
         })
-
         return foods.map((food) => new FoodDtoReturn(
             food.id,
             food.name,
-            restaurants,
+            restaurants && restaurants,
             
         ));
     }

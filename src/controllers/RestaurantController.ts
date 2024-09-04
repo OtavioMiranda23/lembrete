@@ -25,10 +25,6 @@ export default class RestaurantController implements IRestaurantController{
                 return
             }
 
-            if (!foodTypeIds.length) {
-                res.status(400).json({ error: "FoodTypeIds is required"})
-                return
-            }
             if (!userIds.length) {
                 res.status(400).json({ error: "UserIds is required"})
                 return
@@ -92,12 +88,10 @@ export default class RestaurantController implements IRestaurantController{
             res.status(200).json(restaurant);
         } catch (error: unknown) {
             if (error instanceof Error) {
-                if (error.message = "The nickname needs to be unique") {
-                    res.status(409).json({ error: error}) 
-                } else {
-                    res.status(500).json({ error: error})
+
+                res.status(500).json({ error: error})
                 }
-            } else res.status(500).json({ error: "An unexpected error occurred"});
+            else res.status(500).json({ error: "An unexpected error occurred"});
         } 
     }
 

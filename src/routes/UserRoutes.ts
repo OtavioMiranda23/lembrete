@@ -21,13 +21,13 @@ router.get('/users/:id', (req, res) => userController.getById(req, res));
 router.put('/users/:id', (req, res) => userController.update(req, res));
 router.delete('/users/:id', (req, res) => userController.delete(req, res));
 
-router.get('/restaurant', (req, res) => restaurantController.create(req, res));
+router.post('/restaurant', (req, res) => restaurantController.create(req, res));
 router.get('/restaurant', (_, res) => restaurantController.getAll(res));
 router.get('/restaurant/:id', (req, res) => restaurantController.getById(req, res));
 router.put('/restaurant/:id', (req, res) => restaurantController.update(req, res));
 router.delete('/restaurant/:id', (req, res) => restaurantController.delete(req, res));
 
-router.get('/food', (req, res) => foodController.create(req, res));
+router.post('/food', (req, res) => foodController.create(req, res));
 router.get('/food', (_, res) => foodController.getAll(res));
 router.get('/food/:id', (req, res) => foodController.getById(req, res));
 router.put('/food/:id', (req, res) => foodController.update(req, res));

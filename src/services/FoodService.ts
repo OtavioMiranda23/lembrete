@@ -14,8 +14,8 @@ export default class FoodService implements IFoodCrud{
             throw new Error("Food type name is required");
         }
 
-        if (!foodData.restaurantsIds.length) {
-            throw new Error("Restaurants id is required");
+        if (foodData.restaurantsIds && !Array.isArray(foodData.restaurantsIds)) {
+            throw new Error("Invalid type 'restaurantsIds'");
         }
 
         if (!foodData.usersId.length) {
@@ -25,7 +25,9 @@ export default class FoodService implements IFoodCrud{
         if (foodData.name && typeof foodData.name !== 'string') {
             throw new Error("Invalid value for 'name'");
         }
-        
+
+        if (!foodData.restaurantsIds) foodData.restaurantsIds = [];
+        console.log(foodData.restaurantsIds)
         return this.repository.createFood(foodData);
     }
     
@@ -41,10 +43,6 @@ export default class FoodService implements IFoodCrud{
 
     public async updateFood(id: string, foodData: FoodDtoParam): Promise<FoodDtoReturn | null> {
         if (!id) throw new Error("Food id is required");
-
-        if (foodData.id && typeof foodData.id !== 'string') {
-            throw new Error("Invalid value for 'id'");
-        };
 
         if (foodData.name && typeof foodData.name !== 'string') {
             throw new Error("Invalid value for 'name'");

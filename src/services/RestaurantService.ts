@@ -2,6 +2,7 @@ import IRestaurantCrud from "../interfaces/IRestaurantCrud";
 import RestaurantDtoParam from "../dtos/restaurant/RestaurantDtoParam";
 import RestaurantDtoReturn from "../dtos/restaurant/RestaurantDtoReturn";
 import PrismaRestaurantRepository from "../domain/repositories/PrismaRestaurantRepository";
+import UpdateRestaurantDto from "../dtos/restaurant/UpdateRestaurantDto";
 
 export default class RestaurantService implements IRestaurantCrud{
     constructor(repository: PrismaRestaurantRepository) {
@@ -16,9 +17,6 @@ export default class RestaurantService implements IRestaurantCrud{
         }
         if (!restaurantData.userIds || !restaurantData.userIds.length) {
             throw new Error("Restaurant id is required");
-        }
-        if (!restaurantData.foodTypeIds || !restaurantData.foodTypeIds.length) {
-            throw new Error("Food type id is required");
         }
         
         if (restaurantData.name && typeof restaurantData.name !== 'string') {
@@ -49,7 +47,7 @@ export default class RestaurantService implements IRestaurantCrud{
         return this.repository.getRestaurants();
     }
 
-    public updateRestaurant(id: string, restaurantData: RestaurantDtoParam): Promise<RestaurantDtoReturn | null> {
+    public updateRestaurant(id: string, restaurantData: UpdateRestaurantDto): Promise<RestaurantDtoReturn | null> {
         if (!id) throw new Error("Restaurant id is required");
 
         if (restaurantData.name && typeof restaurantData.name !== 'string') {

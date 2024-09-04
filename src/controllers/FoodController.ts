@@ -12,10 +12,11 @@ export default class FoodController implements IFoodController{
     public service;
 
     public async create(req: Request, res: Response): Promise<void> {
+        console.log('entrou')
         try {
             const { name, restaurantsIds, usersId } = req.body as {
                 name: string,
-                restaurantsIds: string[]
+                restaurantsIds: string[],
                 usersId: string[],
             }
             if (!name || !name.trim().length) {
@@ -23,10 +24,6 @@ export default class FoodController implements IFoodController{
                 return
             }
 
-            if (!restaurantsIds.length) {
-                res.status(400).json({ error: "FoodTypeIds is required"})
-                return
-            }
             if (!usersId.length) {
                 res.status(400).json({ error: "UserIds is required"})
                 return
@@ -34,16 +31,31 @@ export default class FoodController implements IFoodController{
             const restaurant = await this.service.createFood(req.body);
             res.status(201).json(restaurant);
         } catch (error: unknown) {
-            res.status(500).json({ error: "An unexpected error occurred"});
+            if (error instanceof Error) {
+                // Verifica mensagens específicas de erro do serviço
+                if (error.message === "Food type name is required") {
+                    res.status(400).json({ error: error });
+                } else if (error.message === "Invalid type 'restaurantsIds'") {
+                    res.status(400).json({ error: error });
+                } else if (error.message === "User id is required") {
+                    res.status(400).json({ error: error });
+                } else {
+                    // Outros erros inesperados
+                    res.status(500).json({ error: "An unexpected error occurred" });
+                }
+            } else {
+                res.status(500).json({ error: "An unexpected error occurred" });
+            }
         }
     }
     
     public async getAll(res: Response): Promise<void> {
+        console.log("entrou controller")
         try {
             const restaurants = await this.service.getFoods();   
             res.status(200).json(restaurants);
         } catch (error: unknown) {
-            if (error instanceof Error) res.status(400).json({ error: error.message});
+            if (error instanceof Error) res.status(400).json({ "error": error});
             else res.status(500).json({ error: "An unexpected error occurred"});
         }
     }

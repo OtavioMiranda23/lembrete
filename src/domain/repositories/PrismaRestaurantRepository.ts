@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import IRestaurantCrud from "../../interfaces/IRestaurantCrud";
 import RestaurantDtoParam from "../../dtos/restaurant/RestaurantDtoParam";
 import RestaurantDtoReturn from "../../dtos/restaurant/RestaurantDtoReturn";
+import { connect } from "http2";
+import UpdateRestaurantDto from "../../dtos/restaurant/UpdateRestaurantDto";
 
 
 export default class PrismaRestaurantRepository implements IRestaurantCrud {
@@ -16,7 +18,7 @@ export default class PrismaRestaurantRepository implements IRestaurantCrud {
                 region: restaurantData.region,
                 avaliation: restaurantData.avaliation,
                 foodTypes: {
-                    connect: restaurantData.foodTypeIds.map((foodId) => ({ id: foodId}))
+                    connect: restaurantData.foodTypes.map((foodId) => ({ id: foodId}))
                 }
             },
             include: {
@@ -77,26 +79,73 @@ export default class PrismaRestaurantRepository implements IRestaurantCrud {
         );
     }
 
-    public async updateRestaurant(id: string, restaurantData: RestaurantDtoParam): Promise<RestaurantDtoReturn | null> {
+    public async updateRestaurant(id: string, restaurantData: UpdateRestaurantDto): Promise<RestaurantDtoReturn | null> {
+        try {
+
+            let data: {
+                name?: string,
+                street?: string,
+                num?: string,
+                region?: string,
+                avaliation?: number,
+                userIds?: string[],
+                foodTypes?: { connect: { id: string }[] }
+            } = {};
+
+            if (restaurantData.name) {
+                data.name = restaurantData.name;
+            }
+            if (restaurantData.street) {
+                data.street = restaurantData.street;
+            } 
+            if (restaurantData.num) {
+                data.num = restaurantData.num;
+            } 
+            if (restaurantData.region) {
+                data.region = restaurantData.region;
+            } 
+            if (restaurantData.street) {
+                data.street = restaurantData.street;
+            }
+            if (restaurantData.foodTypes) {
+                data.foodTypes = {
+                    connect: restaurantData.foodTypes.map(foodId => ({ id: foodId}))} 
+                } 
+            if (restaurantData.avaliation) {
+                data.avaliation = restaurantData.avaliation
+            }
+            if (restaurantData.userIds) {
+                data.userIds = restaurantData.userIds; 
+            }
+            if (Object.keys(data).length === 0) {
+                throw new Error("Nenhum dado foi fornecido para atualização.");
+            }
+            console.log(data)
             const rest = await this.prisma.restaurant.update({
-                where: { id },
-                data: { ...restaurantData },
-                include: {
-                    foodTypes: true
-                }
-            });
-            if (!rest) return null;
+                    where: { id },
+                    data: { ...data },
+                    include: {
+                        foodTypes: true
+                    }
+                });
 
-            return new RestaurantDtoReturn(
-                rest.id,
-                rest.name,
-                rest.street,
-                rest.num,
-                rest.region,
-                rest.avaliation,
-                rest.foodTypes.map(food => food.name)
+                return new RestaurantDtoReturn(
+                    rest.id,
+                    rest.name,
+                    rest.street,
+                    rest.num,
+                    rest.region,
+                    rest.avaliation,
+                    rest.foodTypes.map(food => food.name)
+    
+                ) 
 
-            ) 
+        } catch(e) {
+            console.log(e)
+            return null;
+        }
+
+   
     }
 
     public async deleteRestaurant(id: string): Promise<void> {
