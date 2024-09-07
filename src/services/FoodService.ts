@@ -17,10 +17,6 @@ export default class FoodService implements IFoodCrud{
         if (foodData.restaurantsIds && !Array.isArray(foodData.restaurantsIds)) {
             throw new Error("Invalid type 'restaurantsIds'");
         }
-
-        if (!foodData.usersId.length) {
-            throw new Error("User id is required");
-        }
         
         if (foodData.name && typeof foodData.name !== 'string') {
             throw new Error("Invalid value for 'name'");
@@ -50,9 +46,7 @@ export default class FoodService implements IFoodCrud{
         if (foodData.restaurantsIds && typeof !foodData.restaurantsIds.length) {
             throw new Error("Invalid value for 'restaurantsIds'");
         };
-        if (foodData.usersId && typeof !foodData.usersId.length) {
-            throw new Error("Invalid value for 'usersId'");
-        };
+
         return this.repository.updateFood(id, foodData);
     }
 

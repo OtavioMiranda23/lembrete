@@ -3,6 +3,7 @@ import RestaurantDtoParam from "../dtos/restaurant/RestaurantDtoParam";
 import RestaurantDtoReturn from "../dtos/restaurant/RestaurantDtoReturn";
 import PrismaRestaurantRepository from "../domain/repositories/PrismaRestaurantRepository";
 import UpdateRestaurantDto from "../dtos/restaurant/UpdateRestaurantDto";
+import { BadRequestError } from "../errors/apiErrors";
 
 export default class RestaurantService implements IRestaurantCrud{
     constructor(repository: PrismaRestaurantRepository) {
@@ -13,29 +14,28 @@ export default class RestaurantService implements IRestaurantCrud{
 
     public createRestaurant(restaurantData: RestaurantDtoParam): Promise<RestaurantDtoReturn> {
         if (!restaurantData.name || !restaurantData.name.trim().length) {
-            throw new Error("Restaurant name is required");
+            throw new BadRequestError("Restaurant name is required");
         }
         if (!restaurantData.userIds || !restaurantData.userIds.length) {
-            throw new Error("Restaurant id is required");
+            throw new BadRequestError("Restaurant id is required");
         }
         
         if (restaurantData.name && typeof restaurantData.name !== 'string') {
-            throw new Error("Invalid value for 'name'");
+            throw new BadRequestError("Invalid value for 'name'");
         }
         if (restaurantData.street && typeof restaurantData.street !== 'string') {
-            throw new Error("Invalid value for 'street'");
+            throw new BadRequestError("Invalid value for 'street'");
         }
         if (restaurantData.num && typeof restaurantData.num !== 'string') {
-            throw new Error("Invalid value for 'num'");
+            throw new BadRequestError("Invalid value for 'num'");
         }
         if (restaurantData.region && typeof restaurantData.region !== 'string') {
-            throw new Error("Invalid value for 'region'");
+            throw new BadRequestError("Invalid value for 'region'");
         }
         if (restaurantData.avaliation && typeof restaurantData.avaliation !== 'number' && 
             (restaurantData.avaliation < 0 || restaurantData.avaliation > 5)) {
-            throw new Error("Invalid value for 'avaliation'");
+            throw new BadRequestError("Invalid value for 'avaliation'");
         }
-        
         return this.repository.createRestaurant(restaurantData);
     }
     

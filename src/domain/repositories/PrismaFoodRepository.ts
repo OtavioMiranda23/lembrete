@@ -15,9 +15,7 @@ export default class PrismaFoodRepository implements IFoodCrud {
                 restaurants: {
                     connect: foodData.restaurantsIds.map(restId => ({ id: restId }))
                 },
-                users: {
-                    connect: foodData.usersId.map(userId => ({ id: userId }))
-                }
+
             },
             include: {
                 restaurants: true

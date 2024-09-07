@@ -10,6 +10,8 @@ export default class PrismaRestaurantRepository implements IRestaurantCrud {
     private prisma = new PrismaClient();
   
     public async createRestaurant(restaurantData: RestaurantDtoParam): Promise<RestaurantDtoReturn> {
+        console.log({restaurantData})
+        
         const rest = await this.prisma.restaurant.create({
             data: { 
                 name: restaurantData.name, 
@@ -17,15 +19,16 @@ export default class PrismaRestaurantRepository implements IRestaurantCrud {
                 num: restaurantData.num, 
                 region: restaurantData.region,
                 avaliation: restaurantData.avaliation,
-                foodTypes: {
+                foodTypes: restaurantData.foodTypes ? {
                     connect: restaurantData.foodTypes.map((foodId) => ({ id: foodId}))
-                }
+                } : undefined
             },
             include: {
                 foodTypes: true
             }
 
         });
+
         return new RestaurantDtoReturn(
             rest.id,
             rest.name,

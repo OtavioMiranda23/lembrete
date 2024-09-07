@@ -14,20 +14,15 @@ export default class FoodController implements IFoodController{
     public async create(req: Request, res: Response): Promise<void> {
         console.log('entrou')
         try {
-            const { name, restaurantsIds, usersId } = req.body as {
+            const { name, restaurantsIds } = req.body as {
                 name: string,
                 restaurantsIds: string[],
-                usersId: string[],
             }
             if (!name || !name.trim().length) {
                 res.status(400).json({ error: "Name is required"})
                 return
             }
 
-            if (!usersId.length) {
-                res.status(400).json({ error: "UserIds is required"})
-                return
-            }
             const restaurant = await this.service.createFood(req.body);
             res.status(201).json(restaurant);
         } catch (error: unknown) {

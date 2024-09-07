@@ -6,5 +6,5 @@ export default class RestaurantDtoParam {
         public region: string | null,
         public avaliation: number | null,
         public userIds: string[],
-        public foodTypes: string[]) {}
+        public foodTypes: string[] | null) {}
 }

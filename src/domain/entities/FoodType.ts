@@ -6,6 +6,5 @@ export default class FoodType {
         public id: string,
         public name: string,
         public restaurants: Restaurant[],
-        public users: User[]
     ){}
 }
